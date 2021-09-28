@@ -783,9 +783,17 @@ libc_pselect (int __nfds, fd_set * __restrict __readfds,
 }
 #endif
 
+int vpp_epoll_additional_timeout;
+
 int
 libc_epoll_create (int __size)
 {
+  const char* vpp_epoll_additional_timeout_str = getenv("VPP_VCL_EPOOL_ADDTITONAL_TIMEOUT");
+  if (vpp_epoll_additional_timeout_str!=NULL) {
+    vpp_epoll_additional_timeout = atoi(vpp_epoll_additional_timeout_str);
+  } else {
+    vpp_epoll_additional_timeout = 0;
+  }
   swrap_bind_symbol_libc (epoll_create);
 
   return swrap.libc.symbols._libc_epoll_create.f (__size);
@@ -794,6 +802,12 @@ libc_epoll_create (int __size)
 int
 libc_epoll_create1 (int __flags)
 {
+  const char* vpp_epoll_additional_timeout_str = getenv("VPP_VCL_EPOOL_ADDTITONAL_TIMEOUT");
+  if (vpp_epoll_additional_timeout_str!=NULL) {
+    vpp_epoll_additional_timeout = atoi(vpp_epoll_additional_timeout_str);
+  } else {
+    vpp_epoll_additional_timeout = 0;
+  }
   swrap_bind_symbol_libc (epoll_create1);
 
   return swrap.libc.symbols._libc_epoll_create1.f (__flags);
@@ -811,6 +825,9 @@ int
 libc_epoll_wait (int __epfd, struct epoll_event *__events,
 		 int __maxevents, int __timeout)
 {
+  if (__timeout >= 0) {
+    __timeout += vpp_epoll_additional_timeout;
+  }
   swrap_bind_symbol_libc (epoll_wait);
 
   return swrap.libc.symbols._libc_epoll_wait.f (__epfd, __events,
@@ -821,6 +838,9 @@ int
 libc_epoll_pwait (int __epfd, struct epoll_event *__events,
 		  int __maxevents, int __timeout, const __sigset_t * __ss)
 {
+  if (__timeout >= 0) {
+    __timeout += vpp_epoll_additional_timeout;
+  }
   swrap_bind_symbol_libc (epoll_pwait);
 
   return swrap.libc.symbols._libc_epoll_pwait.f (__epfd, __events,
@@ -831,6 +851,9 @@ libc_epoll_pwait (int __epfd, struct epoll_event *__events,
 int
 libc_poll (struct pollfd *__fds, nfds_t __nfds, int __timeout)
 {
+  if (__timeout >= 0) {
+    __timeout += vpp_epoll_additional_timeout;
+  }
   swrap_bind_symbol_libc (poll);
 
   return swrap.libc.symbols._libc_poll.f (__fds, __nfds, __timeout);

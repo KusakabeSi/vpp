@@ -1563,10 +1563,28 @@ vlib_main_or_worker_loop (vlib_main_t * vm, int is_main)
       for (i = 0; i < vec_len (nm->processes); i++)
 	cpu_time_now = dispatch_process (vm, nm->processes[i], /* frame */ 0,
 					 cpu_time_now);
+    }              
+    const char* loops2sleep_str = getenv("VPP_LOOPS_2_SLEEP");
+    const char* loops2sleep_t_str = getenv("VPP_LOOPS_2_SLEEP_TIME");
+    int loops2sleep = -1;
+    int loop_s_time = 0;
+    int loop_count = 0;
+    if (loops2sleep_str!=NULL) {
+        loops2sleep = atoi(loops2sleep_str);
     }
-
+    if (loops2sleep_t_str!=NULL) {
+        loop_s_time = atoi(loops2sleep_t_str);
+    }
   while (1)
     {
+      if(loops2sleep > 0 && loop_s_time > 0){
+         if(loop_count >= loops2sleep){
+            loop_count = 0;
+            usleep(loop_s_time);
+         }
+         loop_count++;
+      }
+
       vlib_node_runtime_t *n;
 
       if (PREDICT_FALSE (_vec_len (vm->pending_rpc_requests) > 0))
