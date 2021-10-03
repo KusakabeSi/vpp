@@ -132,7 +132,6 @@ mark_tcp_udp_cksum_calc (vlib_buffer_t *b, u8 *l4_hdr_sz)
 	  tcp_header_t *tcp = (tcp_header_t *) (vlib_buffer_get_current (b) +
 						sizeof (ethernet_header_t) +
 						ip4_header_bytes (ip4));
-	  tcp->checksum = 0;
 	  *l4_hdr_sz = tcp_header_bytes (tcp);
 	}
       else if (ip4->protocol == IP_PROTOCOL_UDP)
@@ -141,7 +140,6 @@ mark_tcp_udp_cksum_calc (vlib_buffer_t *b, u8 *l4_hdr_sz)
 	  udp_header_t *udp = (udp_header_t *) (vlib_buffer_get_current (b) +
 						sizeof (ethernet_header_t) +
 						ip4_header_bytes (ip4));
-	  udp->checksum = 0;
 	  *l4_hdr_sz = sizeof (*udp);
 	}
       vnet_buffer (b)->l3_hdr_offset = sizeof (ethernet_header_t);
@@ -172,7 +170,6 @@ mark_tcp_udp_cksum_calc (vlib_buffer_t *b, u8 *l4_hdr_sz)
 	  tcp_header_t *tcp =
 	    (tcp_header_t *) (vlib_buffer_get_current (b) +
 			      sizeof (ethernet_header_t) + ip6_hdr_len);
-	  tcp->checksum = 0;
 	  *l4_hdr_sz = tcp_header_bytes (tcp);
 	}
       else if (ip6->protocol == IP_PROTOCOL_UDP)
@@ -181,7 +178,6 @@ mark_tcp_udp_cksum_calc (vlib_buffer_t *b, u8 *l4_hdr_sz)
 	  udp_header_t *udp =
 	    (udp_header_t *) (vlib_buffer_get_current (b) +
 			      sizeof (ethernet_header_t) + ip6_hdr_len);
-	  udp->checksum = 0;
 	  *l4_hdr_sz = sizeof (*udp);
 	}
       vnet_buffer (b)->l3_hdr_offset = sizeof (ethernet_header_t);
@@ -387,7 +383,6 @@ VLIB_NODE_FN (af_packet_input_node) (vlib_main_t * vm,
   return n_rx_packets;
 }
 
-/* *INDENT-OFF* */
 VLIB_REGISTER_NODE (af_packet_input_node) = {
   .name = "af-packet-input",
   .flags = VLIB_NODE_FLAG_TRACE_SUPPORTED,
@@ -398,7 +393,6 @@ VLIB_REGISTER_NODE (af_packet_input_node) = {
   .n_errors = AF_PACKET_INPUT_N_ERROR,
   .error_strings = af_packet_input_error_strings,
 };
-/* *INDENT-ON* */
 
 
 /*

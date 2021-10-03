@@ -458,6 +458,7 @@ list(APPEND VNET_HEADERS
   ip/ip_table.h
   ip/ip_interface.h
   ip/ip_packet.h
+  ip/ip_psh_cksum.h
   ip/ip_source_and_port_range_check.h
   ip/ip_types.h
   ip/lookup.h
@@ -1524,6 +1525,7 @@ add_vat_test_library(vnet
   ip/ip_test.c
   arp/arp_test.c
   ip6-nd/ip6_nd_test.c
+  srmpls/sr_mpls_test.c
 )
 
 ##############################################################################
